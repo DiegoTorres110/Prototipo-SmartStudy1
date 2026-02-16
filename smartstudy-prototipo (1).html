@@ -1,0 +1,1995 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartStudy - Recupera el control de tu atención</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;900&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #6852F2;
+            --primary-light: #8777F2;
+            --primary-lighter: #ADA2F2;
+            --primary-pale: #C3C2F2;
+            --accent: #2639A6;
+            --bg: #F8F8FC;
+            --text: #1a1a2e;
+            --text-light: #4a4a6a;
+            --white: #ffffff;
+            --success: #4CAF50;
+            --warning: #FF9800;
+            --error: #F44336;
+            --shadow: rgba(104, 82, 242, 0.1);
+        }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: linear-gradient(135deg, var(--bg) 0%, #E8E6F8 100%);
+            color: var(--text);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Navegación */
+        .navbar {
+            background: var(--white);
+            padding: 1.5rem 3rem;
+            box-shadow: 0 4px 20px var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+        }
+
+        .nav-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.8rem;
+            font-weight: 900;
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        .logo-image {
+            height: 60px;
+            width: auto;
+            transition: transform 0.3s;
+        }
+
+        .logo-image:hover {
+            transform: scale(1.05);
+        }
+
+        .logo-octopus {
+            font-size: 2rem;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .nav-btn {
+            background: none;
+            border: none;
+            color: var(--text);
+            font-weight: 600;
+            cursor: pointer;
+            transition: color 0.3s;
+            font-size: 1rem;
+            font-family: 'DM Sans', sans-serif;
+        }
+
+        .nav-btn:hover {
+            color: var(--primary);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            color: var(--white);
+            padding: 0.75rem 2rem;
+            border-radius: 50px;
+            border: none;
+            font-weight: 700;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+            font-size: 1rem;
+            font-family: 'DM Sans', sans-serif;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px var(--shadow);
+        }
+
+        /* Hero Section */
+        .hero {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 6rem 3rem;
+            text-align: center;
+        }
+
+        .hero-logo {
+            height: 150px;
+            width: auto;
+            margin-bottom: 2rem;
+            animation: slideDown 0.8s ease-out;
+            filter: drop-shadow(0 10px 30px var(--shadow));
+        }
+
+        .hero h1 {
+            font-family: 'Poppins', sans-serif;
+            font-size: 4.5rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1.5rem;
+            line-height: 1.2;
+            animation: slideDown 0.8s ease-out;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .hero h2 {
+            font-size: 2rem;
+            color: var(--text-light);
+            font-weight: 600;
+            margin-bottom: 3rem;
+            animation: slideDown 0.8s ease-out 0.2s both;
+        }
+
+        .cta-button {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            color: var(--white);
+            padding: 1.5rem 4rem;
+            border-radius: 50px;
+            border: none;
+            font-weight: 700;
+            cursor: pointer;
+            font-size: 1.3rem;
+            transition: all 0.3s;
+            box-shadow: 0 10px 40px var(--shadow);
+            animation: slideDown 0.8s ease-out 0.4s both;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 15px 50px rgba(104, 82, 242, 0.3);
+        }
+
+        /* Pantallas ocultas por defecto */
+        .screen {
+            display: none;
+        }
+
+        .screen.active {
+            display: block;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Registro/Login */
+        .auth-container {
+            max-width: 500px;
+            margin: 4rem auto;
+            padding: 3rem;
+            background: var(--white);
+            border-radius: 30px;
+            box-shadow: 0 20px 60px var(--shadow);
+        }
+
+        .auth-container h2 {
+            font-family: 'Poppins', sans-serif;
+            font-size: 2.5rem;
+            color: var(--primary);
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--text);
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid #E8E6F8;
+            border-radius: 15px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+            font-family: 'DM Sans', sans-serif;
+        }
+
+        .form-group input::placeholder {
+            color: #B8B8D4;
+            opacity: 1;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(104, 82, 242, 0.1);
+        }
+
+        .form-group input[type="password"] {
+            letter-spacing: 0.1em;
+        }
+
+        .form-group input[type="password"]::placeholder {
+            letter-spacing: normal;
+        }
+
+        .auth-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .btn-secondary {
+            background: var(--white);
+            color: var(--primary);
+            padding: 1rem 2rem;
+            border: 2px solid var(--primary);
+            border-radius: 50px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 1rem;
+            font-family: 'DM Sans', sans-serif;
+        }
+
+        .btn-secondary:hover {
+            background: var(--primary);
+            color: var(--white);
+        }
+
+        /* Planes */
+        .plans-container {
+            max-width: 1200px;
+            margin: 4rem auto;
+            padding: 3rem;
+        }
+
+        .plans-container h2 {
+            font-family: 'Poppins', sans-serif;
+            font-size: 3rem;
+            text-align: center;
+            margin-bottom: 3rem;
+            color: var(--primary);
+        }
+
+        .plans-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 3rem;
+            margin-top: 3rem;
+        }
+
+        .plan-card {
+            background: var(--white);
+            padding: 3rem;
+            border-radius: 30px;
+            box-shadow: 0 10px 40px var(--shadow);
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .plan-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, var(--primary) 0%, var(--accent) 100%);
+        }
+
+        .plan-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 60px rgba(104, 82, 242, 0.2);
+        }
+
+        .plan-card.premium::before {
+            background: linear-gradient(90deg, #FFD700 0%, #FFA500 100%);
+        }
+
+        .plan-badge {
+            display: inline-block;
+            padding: 0.5rem 1.5rem;
+            background: var(--primary-pale);
+            color: var(--primary);
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .plan-card.premium .plan-badge {
+            background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+            color: var(--white);
+        }
+
+        .plan-card.annual {
+            position: relative;
+            border: 3px solid #FFD700;
+        }
+
+        .plan-card.annual::before {
+            background: linear-gradient(90deg, #FFD700 0%, #FF6B6B 100%);
+        }
+
+        .plan-card.semestral {
+            position: relative;
+            border: 3px solid #8777F2;
+        }
+
+        .plan-card.semestral::before {
+            background: linear-gradient(90deg, #8777F2 0%, #6852F2 100%);
+        }
+
+        .plan-card.semestral .plan-badge {
+            background: linear-gradient(135deg, #8777F2 0%, #6852F2 100%);
+            color: var(--white);
+        }
+
+        .plan-card.semestral .savings-badge {
+            background: linear-gradient(135deg, #8777F2 0%, #ADA2F2 100%);
+        }
+
+        .savings-badge {
+            position: absolute;
+            top: -15px;
+            right: 20px;
+            background: linear-gradient(135deg, #FF6B6B 0%, #FF8E53 100%);
+            color: var(--white);
+            padding: 0.5rem 1.5rem;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            box-shadow: 0 5px 15px rgba(255, 107, 107, 0.4);
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .monthly-equivalent {
+            font-size: 1.2rem;
+            color: var(--success);
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            margin-top: -1rem;
+        }
+
+        .plan-card h3 {
+            font-family: 'Poppins', sans-serif;
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: var(--text);
+        }
+
+        .plan-price {
+            font-size: 3rem;
+            font-weight: 900;
+            color: var(--primary);
+            margin-bottom: 2rem;
+        }
+
+        .plan-card.premium .plan-price {
+            background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .plan-features {
+            list-style: none;
+            margin-bottom: 2rem;
+        }
+
+        .plan-features li {
+            padding: 0.75rem 0;
+            padding-left: 2rem;
+            position: relative;
+            color: var(--text-light);
+        }
+
+        .plan-features li::before {
+            content: '🐙';
+            position: absolute;
+            left: 0;
+        }
+
+        .select-plan-btn {
+            width: 100%;
+            padding: 1.25rem;
+            border-radius: 50px;
+            border: none;
+            font-weight: 700;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: 'DM Sans', sans-serif;
+        }
+
+        .plan-card.free .select-plan-btn {
+            background: var(--primary-pale);
+            color: var(--primary);
+        }
+
+        .plan-card.premium .select-plan-btn {
+            background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+            color: var(--white);
+        }
+
+        .select-plan-btn:hover {
+            transform: scale(1.05);
+        }
+
+        /* Métodos de pago */
+        .payment-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .payment-modal.active {
+            display: flex;
+        }
+
+        .payment-content {
+            background: var(--white);
+            padding: 3rem;
+            border-radius: 30px;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .payment-content h3 {
+            font-family: 'Poppins', sans-serif;
+            font-size: 2rem;
+            color: var(--primary);
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .payment-methods {
+            display: grid;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .payment-method {
+            padding: 1.5rem;
+            border: 2px solid #E8E6F8;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .payment-method:hover {
+            border-color: var(--primary);
+            background: #F8F8FC;
+        }
+
+        .payment-method.selected {
+            border-color: var(--primary);
+            background: var(--primary-pale);
+        }
+
+        .close-modal {
+            background: var(--text-light);
+            color: var(--white);
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 50px;
+            font-weight: 700;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 1rem;
+            font-family: 'DM Sans', sans-serif;
+        }
+
+        /* Dashboard */
+        .dashboard {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 3rem;
+        }
+
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 3rem;
+            background: var(--white);
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: 0 5px 20px var(--shadow);
+        }
+
+        .user-info h2 {
+            font-family: 'Poppons', sans-serif;
+            font-size: 2rem;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .user-stats {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 600;
+        }
+
+        .stat-item span {
+            font-size: 1.5rem;
+        }
+
+        .coins {
+            color: #FFD700;
+        }
+
+        .streak {
+            color: #FF6B6B;
+        }
+
+        .lives {
+            color: #4CAF50;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .pet-container {
+            background: var(--white);
+            padding: 3rem;
+            border-radius: 30px;
+            box-shadow: 0 10px 40px var(--shadow);
+            text-align: center;
+        }
+
+        .pet-container h3 {
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.8rem;
+            margin-bottom: 2rem;
+            color: var(--text);
+        }
+
+        .octopus {
+            font-size: 10rem;
+            margin: 2rem 0;
+            animation: bounce 2s ease-in-out infinite;
+            filter: drop-shadow(0 10px 20px var(--shadow));
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        .octopus.sad {
+            opacity: 0.5;
+            filter: grayscale(70%);
+        }
+
+        .pet-status {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--text-light);
+            margin-top: 1rem;
+        }
+
+        .customize-btn {
+            margin-top: 2rem;
+            background: var(--primary-light);
+            color: var(--white);
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 50px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: 'DM Sans', sans-serif;
+        }
+
+        .customize-btn:hover {
+            background: var(--primary);
+            transform: scale(1.05);
+        }
+
+        .sessions-container {
+            background: var(--white);
+            padding: 2rem;
+            border-radius: 30px;
+            box-shadow: 0 10px 40px var(--shadow);
+        }
+
+        .sessions-container h3 {
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            color: var(--text);
+        }
+
+        .session-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .session-item {
+            padding: 1.5rem;
+            background: var(--bg);
+            border-radius: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .session-item:hover {
+            background: var(--primary-pale);
+            transform: translateX(5px);
+        }
+
+        .session-info h4 {
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 0.25rem;
+        }
+
+        .session-info p {
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+
+        .start-session-btn {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            color: var(--white);
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 50px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: 'DM Sans', sans-serif;
+        }
+
+        .start-session-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .add-session-btn {
+            width: 100%;
+            padding: 1.25rem;
+            background: var(--primary-pale);
+            color: var(--primary);
+            border: 2px dashed var(--primary);
+            border-radius: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: 'DM Sans', sans-serif;
+        }
+
+        .add-session-btn:hover {
+            background: var(--primary);
+            color: var(--white);
+        }
+
+        .add-session-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Configurador de sesión */
+        .session-config {
+            background: var(--white);
+            padding: 3rem;
+            border-radius: 30px;
+            box-shadow: 0 10px 40px var(--shadow);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .session-config h3 {
+            font-family: 'Poppins', sans-serif;
+            font-size: 2rem;
+            color: var(--primary);
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .config-group {
+            margin-bottom: 2rem;
+        }
+
+        .config-group label {
+            display: block;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--text);
+            font-size: 1.1rem;
+        }
+
+        .time-inputs {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+        }
+
+        .time-input {
+            text-align: center;
+        }
+
+        .time-input input {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid #E8E6F8;
+            border-radius: 15px;
+            font-size: 1.5rem;
+            font-weight: 700;
+            text-align: center;
+            color: var(--primary);
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .time-input span {
+            display: block;
+            margin-top: 0.5rem;
+            font-size: 0.9rem;
+            color: var(--text-light);
+        }
+
+        .config-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        /* Timer activo */
+        .timer-screen {
+            max-width: 800px;
+            margin: 4rem auto;
+            padding: 4rem;
+            background: var(--white);
+            border-radius: 40px;
+            box-shadow: 0 20px 60px var(--shadow);
+            text-align: center;
+        }
+
+        .timer-display {
+            font-family: 'Poppins', sans-serif;
+            font-size: 8rem;
+            font-weight: 900;
+            color: var(--primary);
+            margin: 3rem 0;
+            text-shadow: 0 5px 20px var(--shadow);
+        }
+
+        .timer-label {
+            font-size: 1.5rem;
+            color: var(--text-light);
+            margin-bottom: 2rem;
+            font-weight: 600;
+        }
+
+        .timer-controls {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 3rem;
+        }
+
+        .timer-btn {
+            padding: 1.25rem 3rem;
+            border: none;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: 'DM Sans', sans-serif;
+        }
+
+        .pause-btn {
+            background: #FFA500;
+            color: var(--white);
+        }
+
+        .stop-btn {
+            background: var(--error);
+            color: var(--white);
+        }
+
+        .timer-btn:hover {
+            transform: scale(1.1);
+        }
+
+        /* Tienda */
+        .shop-container {
+            max-width: 1200px;
+            margin: 3rem auto;
+            padding: 3rem;
+        }
+
+        .shop-container h2 {
+            font-family: 'Poppins', sans-serif;
+            font-size: 3rem;
+            color: var(--primary);
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .shop-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+
+        .shop-item {
+            background: var(--white);
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: 0 5px 20px var(--shadow);
+            text-align: center;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .shop-item:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 10px 30px var(--shadow);
+        }
+
+        .shop-item-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+
+        .shop-item h4 {
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+            color: var(--text);
+        }
+
+        .shop-item-price {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #FFD700;
+            margin-bottom: 1rem;
+        }
+
+        .buy-btn {
+            background: var(--primary);
+            color: var(--white);
+            padding: 0.75rem 2rem;
+            border: none;
+            border-radius: 50px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: 'DM Sans', sans-serif;
+        }
+
+        .buy-btn:hover {
+            background: var(--accent);
+            transform: scale(1.05);
+        }
+
+        .buy-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Logros */
+        .achievements-container {
+            max-width: 1200px;
+            margin: 3rem auto;
+            padding: 3rem;
+        }
+
+        .achievements-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .achievement-card {
+            background: var(--white);
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: 0 5px 20px var(--shadow);
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            transition: all 0.3s;
+        }
+
+        .achievement-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .achievement-card.locked {
+            opacity: 0.5;
+            filter: grayscale(100%);
+        }
+
+        .achievement-icon {
+            font-size: 3rem;
+        }
+
+        .achievement-info h4 {
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+            color: var(--text);
+        }
+
+        .achievement-info p {
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+
+        .achievement-reward {
+            margin-top: 0.5rem;
+            font-weight: 700;
+            color: #FFD700;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .hero h2 {
+                font-size: 1.2rem;
+            }
+
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .timer-display {
+                font-size: 4rem;
+            }
+
+            .nav-content {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .plans-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* Botón de regreso */
+        .back-button {
+            background: var(--white);
+            color: var(--primary);
+            border: 2px solid var(--primary);
+            padding: 0.75rem 1.5rem;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: 'DM Sans', sans-serif;
+            margin-bottom: 2rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .back-button:hover {
+            background: var(--primary);
+            color: var(--white);
+            transform: translateX(-5px);
+        }
+
+        #timer-screen .back-button {
+            position: absolute;
+            top: 2rem;
+            left: 2rem;
+        }
+
+        #session-config-screen .back-button {
+            margin-bottom: 2rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navegación -->
+    <nav class="navbar">
+        <div class="nav-content">
+            <a href="#" class="logo" onclick="event.preventDefault(); goHome()">
+                <img src="logo-full.jpeg" alt="SmartStudy" class="logo-image">
+            </a>
+            <div class="nav-links">
+                <button class="nav-btn" id="nav-shop" onclick="showScreen('shop')" style="display: none;">Tienda</button>
+                <button class="nav-btn" id="nav-achievements" onclick="showScreen('achievements')" style="display: none;">Logros</button>
+                <button class="nav-btn" id="nav-logout" onclick="logout()" style="display: none;">Cerrar Sesión</button>
+                <button class="btn-secondary" id="nav-register" onclick="showScreen('register')" style="margin-right: 1rem;">Registrarse</button>
+                <button class="btn-primary" id="nav-login" onclick="showScreen('login')">Iniciar Sesión</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Pantalla de inicio -->
+    <div id="home-screen" class="screen active">
+        <section class="hero">
+            <img src="logo-simple.jpeg" alt="SmartStudy" class="hero-logo">
+            <h1>Recupera el control<br>de tu atención</h1>
+            <h2>Maximiza tu potencial académico</h2>
+            <button class="cta-button" onclick="quickStart()">Comienza Ahora</button>
+        </section>
+    </div>
+
+    <!-- Registro -->
+    <div id="register-screen" class="screen">
+        <button class="back-button" onclick="showScreen('home')">← Volver al inicio</button>
+        <div class="auth-container">
+            <h2>Crear Cuenta</h2>
+            <form onsubmit="register(event)">
+                <div class="form-group">
+                    <label>Nombre Completo</label>
+                    <input type="text" id="register-name" placeholder="Ingresa tu nombre" required>
+                </div>
+                <div class="form-group">
+                    <label>Correo Electrónico</label>
+                    <input type="email" id="register-email" placeholder="tu@email.com" required>
+                </div>
+                <div class="form-group">
+                    <label>Edad</label>
+                    <input type="number" id="register-age" min="10" max="100" placeholder="18" required>
+                </div>
+                <div class="form-group">
+                    <label>Contraseña</label>
+                    <input type="password" id="register-password" placeholder="Mínimo 6 caracteres" minlength="6" required>
+                </div>
+                <div class="form-group">
+                    <label>Confirmar Contraseña</label>
+                    <input type="password" id="register-confirm-password" placeholder="Confirma tu contraseña" minlength="6" required>
+                </div>
+                <div class="auth-buttons">
+                    <button type="submit" class="btn-primary">Crear Cuenta</button>
+                    <button type="button" class="btn-secondary" onclick="showScreen('login')">Ya tengo cuenta</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Login -->
+    <div id="login-screen" class="screen">
+        <button class="back-button" onclick="showScreen('home')">← Volver al inicio</button>
+        <div class="auth-container">
+            <h2>Iniciar Sesión</h2>
+            <form onsubmit="login(event)">
+                <div class="form-group">
+                    <label>Correo Electrónico</label>
+                    <input type="email" id="login-email" required>
+                </div>
+                <div class="form-group">
+                    <label>Contraseña</label>
+                    <input type="password" id="login-password" required>
+                </div>
+                <div class="auth-buttons">
+                    <button type="submit" class="btn-primary">Entrar</button>
+                    <button type="button" class="btn-secondary" onclick="showScreen('register')">Crear cuenta</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Selección de planes -->
+    <div id="plans-screen" class="screen">
+        <div class="plans-container">
+            <button class="back-button" onclick="showScreen('home')">← Volver al inicio</button>
+            <h2>Elige tu plan</h2>
+            <div class="plans-grid">
+                <!-- Plan Gratis -->
+                <div class="plan-card free">
+                    <span class="plan-badge">🆓 GRATIS</span>
+                    <h3>Plan Básico</h3>
+                    <div class="plan-price">$0</div>
+                    <ul class="plan-features">
+                        <li>Bloquear 1 dispositivo adicional</li>
+                        <li>Hasta 2 sesiones personalizadas</li>
+                        <li>1 vida para salvar racha</li>
+                        <li>10 monedas por sesión</li>
+                        <li>Cosméticos limitados</li>
+                    </ul>
+                    <button class="select-plan-btn" onclick="selectPlan('free')">Seleccionar Plan</button>
+                </div>
+
+                <!-- Plan Premium Mensual -->
+                <div class="plan-card premium">
+                    <span class="plan-badge">⭐ PRO MENSUAL</span>
+                    <h3>Plan Pro</h3>
+                    <div class="plan-price">$99<span style="font-size: 1.5rem;">/mes</span></div>
+                    <ul class="plan-features">
+                        <li>Dispositivos ilimitados</li>
+                        <li>Sesiones ilimitadas</li>
+                        <li>2 vidas para salvar racha</li>
+                        <li>20 monedas por sesión</li>
+                        <li>Todos los cosméticos</li>
+                        <li>Sin anuncios</li>
+                    </ul>
+                    <button class="select-plan-btn" onclick="selectPlan('premium')">Seleccionar Plan</button>
+                </div>
+
+                <!-- Plan Premium Semestral -->
+                <div class="plan-card premium semestral">
+                    <span class="plan-badge">💎 POPULAR</span>
+                    <div class="savings-badge">Ahorras $95</div>
+                    <h3>Plan Pro Semestral</h3>
+                    <div class="plan-price">$499<span style="font-size: 1.5rem;">/6 meses</span></div>
+                    <div class="monthly-equivalent">Solo $83.17/mes</div>
+                    <ul class="plan-features">
+                        <li>Dispositivos ilimitados</li>
+                        <li>Sesiones ilimitadas</li>
+                        <li>2 vidas para salvar racha</li>
+                        <li>20 monedas por sesión</li>
+                        <li>Todos los cosméticos</li>
+                        <li>Sin anuncios</li>
+                        <li>🎁 Bonus: 100 monedas gratis</li>
+                    </ul>
+                    <button class="select-plan-btn" onclick="selectPlan('semestral')">Seleccionar Plan</button>
+                </div>
+
+                <!-- Plan Premium Anual -->
+                <div class="plan-card premium annual">
+                    <span class="plan-badge">🔥 MEJOR OFERTA</span>
+                    <div class="savings-badge">Ahorras $198</div>
+                    <h3>Plan Pro Anual</h3>
+                    <div class="plan-price">$990<span style="font-size: 1.5rem;">/año</span></div>
+                    <div class="monthly-equivalent">Solo $82.50/mes</div>
+                    <ul class="plan-features">
+                        <li>Dispositivos ilimitados</li>
+                        <li>Sesiones ilimitadas</li>
+                        <li>5 vidas para salvar racha</li>
+                        <li>20 monedas por sesión</li>
+                        <li>Todos los cosméticos</li>
+                        <li>Sin anuncios</li>
+                        <li>🎁 Bonus: 200 monedas gratis</li>
+                    </ul>
+                    <button class="select-plan-btn" onclick="selectPlan('annual')">Seleccionar Plan</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de pago -->
+    <div id="payment-modal" class="payment-modal">
+        <div class="payment-content">
+            <h3>Método de Pago</h3>
+            <div class="payment-methods">
+                <div class="payment-method" onclick="selectPayment(this)">
+                    <span style="font-size: 2rem;">💳</span>
+                    <div>
+                        <h4>Tarjeta de Crédito/Débito</h4>
+                        <p>Visa, Mastercard, American Express</p>
+                    </div>
+                </div>
+                <div class="payment-method" onclick="selectPayment(this)">
+                    <span style="font-size: 2rem;">📱</span>
+                    <div>
+                        <h4>PayPal</h4>
+                        <p>Pago seguro con PayPal</p>
+                    </div>
+                </div>
+                <div class="payment-method" onclick="selectPayment(this)">
+                    <span style="font-size: 2rem;">🏦</span>
+                    <div>
+                        <h4>Transferencia Bancaria</h4>
+                        <p>SPEI / Transferencia directa</p>
+                    </div>
+                </div>
+            </div>
+            <button class="btn-primary" onclick="processPremiumPayment()">Confirmar Pago</button>
+            <button class="close-modal" onclick="closePaymentModal()">Cancelar</button>
+        </div>
+    </div>
+
+    <!-- Dashboard -->
+    <div id="dashboard-screen" class="screen">
+        <div class="dashboard">
+            <div class="dashboard-header">
+                <div class="user-info">
+                    <h2 id="user-welcome">¡Hola!</h2>
+                    <p id="user-plan">Plan Gratis</p>
+                </div>
+                <div class="user-stats">
+                    <div class="stat-item coins">
+                        <span>💰</span>
+                        <div>
+                            <div id="user-coins">0</div>
+                            <small>Monedas</small>
+                        </div>
+                    </div>
+                    <div class="stat-item streak">
+                        <span>🔥</span>
+                        <div>
+                            <div id="user-streak">0</div>
+                            <small>Racha</small>
+                        </div>
+                    </div>
+                    <div class="stat-item lives">
+                        <span>❤️</span>
+                        <div>
+                            <div id="user-lives">1</div>
+                            <small>Vidas</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="dashboard-grid">
+                <div class="pet-container">
+                    <h3>Tu Compañero de Estudio</h3>
+                    <div class="octopus" id="pet-octopus">🐙</div>
+                    <div class="pet-status" id="pet-status">¡Completemos una sesión hoy!</div>
+                    <button class="customize-btn" onclick="showScreen('shop')">Personalizar Mascota</button>
+                </div>
+
+                <div class="sessions-container">
+                    <h3>Mis Sesiones</h3>
+                    <div class="session-list" id="session-list">
+                        <!-- Las sesiones se cargarán aquí -->
+                    </div>
+                    <button class="add-session-btn" id="add-session-btn" onclick="showScreen('session-config')">+ Nueva Sesión</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Configurador de sesión -->
+    <div id="session-config-screen" class="screen">
+        <div class="dashboard">
+            <button class="back-button" onclick="showScreen('dashboard')">← Volver al dashboard</button>
+            <div class="session-config">
+                <h3>Configurar Sesión de Estudio</h3>
+                <form onsubmit="saveSession(event)">
+                    <div class="config-group">
+                        <label>Nombre de la sesión</label>
+                        <input type="text" id="session-name" class="form-group input" placeholder="Ej: Matemáticas" required style="width: 100%; padding: 1rem; border: 2px solid #E8E6F8; border-radius: 15px; font-size: 1rem;">
+                    </div>
+                    <div class="config-group">
+                        <label>Duración del Pomodoro</label>
+                        <div class="time-inputs">
+                            <div class="time-input">
+                                <input type="number" id="work-minutes" value="25" min="1" max="60" required>
+                                <span>Minutos</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="config-group">
+                        <label>Descanso Corto</label>
+                        <div class="time-inputs">
+                            <div class="time-input">
+                                <input type="number" id="short-break" value="5" min="1" max="30" required>
+                                <span>Minutos</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="config-group">
+                        <label>Descanso Largo</label>
+                        <div class="time-inputs">
+                            <div class="time-input">
+                                <input type="number" id="long-break" value="15" min="1" max="60" required>
+                                <span>Minutos</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="config-buttons">
+                        <button type="submit" class="btn-primary" style="flex: 1;">Guardar Sesión</button>
+                        <button type="button" class="btn-secondary" style="flex: 1;" onclick="showScreen('dashboard')">Cancelar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Timer activo -->
+    <div id="timer-screen" class="screen">
+        <button class="back-button" onclick="showScreen('dashboard')">← Volver al dashboard</button>
+        <div class="timer-screen">
+            <h2 id="timer-session-name" style="font-family: 'Poppins', sans-serif; font-size: 2rem; color: var(--text);">Sesión de Estudio</h2>
+            <div class="timer-label" id="timer-phase">Tiempo de trabajo</div>
+            <div class="timer-display" id="timer-display">25:00</div>
+            <div class="timer-controls">
+                <button class="timer-btn pause-btn" id="pause-btn" onclick="pauseTimer()">Pausar</button>
+                <button class="timer-btn stop-btn" onclick="stopTimer()">Terminar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tienda -->
+    <div id="shop-screen" class="screen">
+        <div class="shop-container">
+            <button class="back-button" onclick="showScreen('dashboard')">← Volver al dashboard</button>
+            <h2>🛍️ Tienda de Cosméticos</h2>
+            <div class="shop-grid" id="shop-grid">
+                <!-- Los items se cargarán aquí -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Logros -->
+    <div id="achievements-screen" class="screen">
+        <div class="achievements-container">
+            <button class="back-button" onclick="showScreen('dashboard')">← Volver al dashboard</button>
+            <h2 style="font-family: 'Poppins', sans-serif; font-size: 3rem; color: var(--primary); text-align: center; margin-bottom: 2rem;">🏆 Logros</h2>
+            <div class="achievements-grid" id="achievements-grid">
+                <!-- Los logros se cargarán aquí -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Estado global
+        let currentUser = null;
+        let timerInterval = null;
+        let currentSession = null;
+        let isPaused = false;
+        let currentTime = 0;
+        let currentPhase = 'work'; // work, short-break, long-break
+        let pomodoroCount = 0;
+
+        // Inicializar datos por defecto
+        function initDefaultData() {
+            if (!localStorage.getItem('shopItems')) {
+                const defaultShop = [
+                    { id: 1, name: 'Sombrero de Pirata', icon: '🏴‍☠️', price: 10, type: 'hat' },
+                    { id: 2, name: 'Gafas de Sol', icon: '😎', price: 8, type: 'accessory' },
+                    { id: 3, name: 'Corona Real', icon: '👑', price: 15, type: 'hat' },
+                    { id: 4, name: 'Moño', icon: '🎀', price: 5, type: 'accessory' },
+                    { id: 5, name: 'Capa de Superhéroe', icon: '🦸', price: 12, type: 'outfit' },
+                    { id: 6, name: 'Pajarita', icon: '🎩', price: 7, type: 'accessory' },
+                    { id: 7, name: 'Bufanda', icon: '🧣', price: 6, type: 'accessory' },
+                    { id: 8, name: 'Sombrero de Chef', icon: '👨‍🍳', price: 9, type: 'hat' },
+                ];
+                localStorage.setItem('shopItems', JSON.stringify(defaultShop));
+            }
+
+            if (!localStorage.getItem('achievements')) {
+                const defaultAchievements = [
+                    { id: 1, name: 'Primera Sesión', description: 'Completa tu primera sesión de estudio', icon: '🎯', reward: 50, unlocked: false },
+                    { id: 2, name: 'Racha de 7 días', description: 'Mantén tu racha por 7 días consecutivos', icon: '🔥', reward: 100, unlocked: false },
+                    { id: 3, name: 'Estudiante Dedicado', description: 'Completa 50 sesiones de estudio', icon: '📚', reward: 200, unlocked: false },
+                    { id: 4, name: 'Coleccionista', description: 'Compra 5 cosméticos diferentes', icon: '🎨', reward: 75, unlocked: false },
+                    { id: 5, name: 'Maratonista', description: 'Estudia por 5 horas en un día', icon: '⏰', reward: 150, unlocked: false },
+                    { id: 6, name: 'Maestro del Pomodoro', description: 'Completa 100 pomodoros', icon: '🍅', reward: 300, unlocked: false },
+                ];
+                localStorage.setItem('achievements', JSON.stringify(defaultAchievements));
+            }
+        }
+
+        // Navegación entre pantallas
+        function showScreen(screenId) {
+            document.querySelectorAll('.screen').forEach(screen => {
+                screen.classList.remove('active');
+            });
+            document.getElementById(screenId + '-screen').classList.add('active');
+        }
+
+        // Inicio rápido sin registro
+        function quickStart() {
+            // Crear usuario demo automáticamente
+            const demoUser = {
+                name: 'Usuario',
+                email: 'demo@smartstudy.com',
+                age: 20,
+                password: 'demo123',
+                plan: null,
+                coins: 0,
+                streak: 0,
+                lives: 1,
+                sessions: [],
+                completedSessions: 0,
+                lastStudyDate: null,
+                purchasedItems: [],
+                achievements: []
+            };
+            
+            currentUser = demoUser;
+            showScreen('plans');
+        }
+
+        // Función para ir al home o dashboard según el estado
+        function goHome() {
+            if (currentUser && currentUser.plan) {
+                showScreen('dashboard');
+            } else {
+                showScreen('home');
+            }
+        }
+
+        // Registro
+        function register(event) {
+            event.preventDefault();
+            const name = document.getElementById('register-name').value;
+            const email = document.getElementById('register-email').value;
+            const age = document.getElementById('register-age').value;
+            const password = document.getElementById('register-password').value;
+            const confirmPassword = document.getElementById('register-confirm-password').value;
+
+            // Validar que las contraseñas coincidan
+            if (password !== confirmPassword) {
+                alert('Las contraseñas no coinciden. Por favor, inténtalo de nuevo.');
+                return;
+            }
+
+            // Validar que el correo no esté registrado
+            const existingUser = localStorage.getItem('user_' + email);
+            if (existingUser) {
+                alert('Este correo ya está registrado. Por favor, inicia sesión o usa otro correo.');
+                return;
+            }
+
+            const user = {
+                name,
+                email,
+                age,
+                password,
+                plan: null,
+                coins: 0,
+                streak: 0,
+                lives: 1,
+                sessions: [],
+                completedSessions: 0,
+                lastStudyDate: null,
+                purchasedItems: [],
+                achievements: []
+            };
+
+            localStorage.setItem('user_' + email, JSON.stringify(user));
+            alert('¡Cuenta creada exitosamente! 🎉\nAhora selecciona tu plan.');
+            
+            // Establecer como usuario actual y llevar a planes
+            currentUser = user;
+            showScreen('plans');
+        }
+
+        // Login
+        function login(event) {
+            event.preventDefault();
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+
+            const userData = localStorage.getItem('user_' + email);
+            if (userData) {
+                const user = JSON.parse(userData);
+                if (user.password === password) {
+                    if (user.plan) {
+                        currentUser = user;
+                        updateDashboard();
+                        showScreen('dashboard');
+                        updateNavbar(true);
+                        checkStreak();
+                    } else {
+                        currentUser = user;
+                        showScreen('plans');
+                    }
+                } else {
+                    alert('Contraseña incorrecta');
+                }
+            } else {
+                alert('Usuario no encontrado');
+            }
+        }
+
+        // Seleccionar plan
+        function selectPlan(planType) {
+            if (planType === 'premium' || planType === 'semestral' || planType === 'annual') {
+                currentUser.selectedPlan = planType;
+                document.getElementById('payment-modal').classList.add('active');
+            } else {
+                currentUser.plan = 'free';
+                currentUser.lives = 1;
+                saveUser();
+                updateDashboard();
+                showScreen('dashboard');
+                updateNavbar(true);
+            }
+        }
+
+        // Modal de pago
+        let selectedPaymentMethod = null;
+
+        function selectPayment(element) {
+            document.querySelectorAll('.payment-method').forEach(pm => {
+                pm.classList.remove('selected');
+            });
+            element.classList.add('selected');
+            selectedPaymentMethod = true;
+        }
+
+        function closePaymentModal() {
+            document.getElementById('payment-modal').classList.remove('active');
+        }
+
+        function processPremiumPayment() {
+            if (!selectedPaymentMethod) {
+                alert('Por favor selecciona un método de pago');
+                return;
+            }
+            
+            if (currentUser.selectedPlan === 'annual') {
+                currentUser.plan = 'annual';
+                currentUser.lives = 5;
+                currentUser.coins += 200; // Bonus de bienvenida
+                alert('¡Bienvenido al plan Pro Anual! 🔥\n¡Has recibido 200 monedas de regalo!');
+            } else if (currentUser.selectedPlan === 'semestral') {
+                currentUser.plan = 'semestral';
+                currentUser.lives = 2;
+                currentUser.coins += 100; // Bonus de bienvenida
+                alert('¡Bienvenido al plan Pro Semestral! 💎\n¡Has recibido 100 monedas de regalo!');
+            } else {
+                currentUser.plan = 'premium';
+                currentUser.lives = 2;
+                alert('¡Bienvenido al plan Pro Mensual! ⭐');
+            }
+            
+            saveUser();
+            closePaymentModal();
+            updateDashboard();
+            showScreen('dashboard');
+            updateNavbar(true);
+        }
+
+        // Actualizar navbar
+        function updateNavbar(loggedIn) {
+            if (loggedIn) {
+                document.getElementById('nav-login').style.display = 'none';
+                document.getElementById('nav-register').style.display = 'none';
+                document.getElementById('nav-shop').style.display = 'block';
+                document.getElementById('nav-achievements').style.display = 'block';
+                document.getElementById('nav-logout').style.display = 'block';
+            } else {
+                document.getElementById('nav-login').style.display = 'block';
+                document.getElementById('nav-register').style.display = 'block';
+                document.getElementById('nav-shop').style.display = 'none';
+                document.getElementById('nav-achievements').style.display = 'none';
+                document.getElementById('nav-logout').style.display = 'none';
+            }
+        }
+
+        // Logout
+        function logout() {
+            currentUser = null;
+            showScreen('home');
+            updateNavbar(false);
+        }
+
+        // Guardar usuario
+        function saveUser() {
+            localStorage.setItem('user_' + currentUser.email, JSON.stringify(currentUser));
+        }
+
+        // Verificar racha
+        function checkStreak() {
+            const today = new Date().toDateString();
+            const lastDate = currentUser.lastStudyDate;
+
+            if (lastDate) {
+                const last = new Date(lastDate);
+                const yesterday = new Date();
+                yesterday.setDate(yesterday.getDate() - 1);
+
+                if (last.toDateString() !== today && last.toDateString() !== yesterday.toDateString()) {
+                    // Perdió la racha
+                    if (currentUser.lives > 0) {
+                        // Puede usar una vida
+                    } else {
+                        currentUser.streak = 0;
+                        saveUser();
+                    }
+                }
+            }
+
+            updatePetMood();
+        }
+
+        // Actualizar estado del pulpo
+        function updatePetMood() {
+            const octopus = document.getElementById('pet-octopus');
+            const status = document.getElementById('pet-status');
+            const today = new Date().toDateString();
+
+            if (currentUser.lastStudyDate === today) {
+                octopus.classList.remove('sad');
+                status.textContent = '¡Excelente trabajo hoy! 🎉';
+            } else {
+                octopus.classList.add('sad');
+                status.textContent = '¡Completemos una sesión hoy!';
+            }
+        }
+
+        // Actualizar dashboard
+        function updateDashboard() {
+            document.getElementById('user-welcome').textContent = `¡Hola, ${currentUser.name}!`;
+            const planText = currentUser.plan === 'annual' ? 'Pro Anual 🔥' : 
+                            currentUser.plan === 'semestral' ? 'Pro Semestral 💎' :
+                            currentUser.plan === 'premium' ? 'Premium ⭐' : 'Gratis';
+            document.getElementById('user-plan').textContent = `Plan ${planText}`;
+            document.getElementById('user-coins').textContent = currentUser.coins;
+            document.getElementById('user-streak').textContent = currentUser.streak;
+            document.getElementById('user-lives').textContent = currentUser.lives;
+
+            loadSessions();
+            updatePetMood();
+            updateAddSessionButton();
+        }
+
+        // Actualizar botón de agregar sesión
+        function updateAddSessionButton() {
+            const maxSessions = (currentUser.plan === 'premium' || currentUser.plan === 'semestral' || currentUser.plan === 'annual') ? Infinity : 2;
+            const btn = document.getElementById('add-session-btn');
+            
+            if (currentUser.sessions.length >= maxSessions) {
+                btn.disabled = true;
+                btn.textContent = (currentUser.plan === 'premium' || currentUser.plan === 'semestral' || currentUser.plan === 'annual') ? '+ Nueva Sesión' : '⭐ Actualiza a Premium para más sesiones';
+            } else {
+                btn.disabled = false;
+                btn.textContent = '+ Nueva Sesión';
+            }
+        }
+
+        // Cargar sesiones
+        function loadSessions() {
+            const sessionList = document.getElementById('session-list');
+            sessionList.innerHTML = '';
+
+            if (currentUser.sessions.length === 0) {
+                sessionList.innerHTML = '<p style="text-align: center; color: var(--text-light); padding: 2rem;">No hay sesiones configuradas</p>';
+                return;
+            }
+
+            currentUser.sessions.forEach((session, index) => {
+                const sessionDiv = document.createElement('div');
+                sessionDiv.className = 'session-item';
+                sessionDiv.innerHTML = `
+                    <div class="session-info">
+                        <h4>${session.name}</h4>
+                        <p>⏱️ ${session.workMinutes} min trabajo • ${session.shortBreak} min descanso</p>
+                    </div>
+                    <button class="start-session-btn" onclick="startSession(${index})">Iniciar</button>
+                `;
+                sessionList.appendChild(sessionDiv);
+            });
+        }
+
+        // Guardar sesión
+        function saveSession(event) {
+            event.preventDefault();
+            
+            const session = {
+                name: document.getElementById('session-name').value,
+                workMinutes: parseInt(document.getElementById('work-minutes').value),
+                shortBreak: parseInt(document.getElementById('short-break').value),
+                longBreak: parseInt(document.getElementById('long-break').value)
+            };
+
+            currentUser.sessions.push(session);
+            saveUser();
+            updateDashboard();
+            showScreen('dashboard');
+            alert('¡Sesión guardada exitosamente!');
+        }
+
+        // Iniciar sesión de estudio
+        function startSession(index) {
+            currentSession = currentUser.sessions[index];
+            currentPhase = 'work';
+            currentTime = currentSession.workMinutes * 60;
+            pomodoroCount = 0;
+            
+            document.getElementById('timer-session-name').textContent = currentSession.name;
+            updateTimerDisplay();
+            showScreen('timer');
+            startTimer();
+        }
+
+        // Timer
+        function startTimer() {
+            isPaused = false;
+            document.getElementById('pause-btn').textContent = 'Pausar';
+            
+            timerInterval = setInterval(() => {
+                if (!isPaused && currentTime > 0) {
+                    currentTime--;
+                    updateTimerDisplay();
+                } else if (currentTime === 0) {
+                    handlePhaseComplete();
+                }
+            }, 1000);
+        }
+
+        function pauseTimer() {
+            isPaused = !isPaused;
+            document.getElementById('pause-btn').textContent = isPaused ? 'Reanudar' : 'Pausar';
+        }
+
+        function stopTimer() {
+            clearInterval(timerInterval);
+            if (confirm('¿Estás seguro de que quieres terminar esta sesión?')) {
+                showScreen('dashboard');
+            } else {
+                startTimer();
+            }
+        }
+
+        function updateTimerDisplay() {
+            const minutes = Math.floor(currentTime / 60);
+            const seconds = currentTime % 60;
+            document.getElementById('timer-display').textContent = 
+                `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+
+        function handlePhaseComplete() {
+            clearInterval(timerInterval);
+            
+            if (currentPhase === 'work') {
+                pomodoroCount++;
+                
+                // Recompensar al usuario
+                const coinsEarned = (currentUser.plan === 'premium' || currentUser.plan === 'semestral' || currentUser.plan === 'annual') ? 20 : 10;
+                currentUser.coins += coinsEarned;
+                currentUser.completedSessions++;
+                
+                // Actualizar racha
+                const today = new Date().toDateString();
+                if (currentUser.lastStudyDate !== today) {
+                    currentUser.streak++;
+                    currentUser.lastStudyDate = today;
+                }
+                
+                saveUser();
+                checkAchievements();
+                
+                // Siguiente fase
+                if (pomodoroCount % 4 === 0) {
+                    currentPhase = 'long-break';
+                    currentTime = currentSession.longBreak * 60;
+                    document.getElementById('timer-phase').textContent = '☕ Descanso Largo';
+                } else {
+                    currentPhase = 'short-break';
+                    currentTime = currentSession.shortBreak * 60;
+                    document.getElementById('timer-phase').textContent = '☕ Descanso Corto';
+                }
+                
+                alert(`¡Pomodoro completado! Ganaste ${coinsEarned} monedas 🎉`);
+                updateTimerDisplay();
+                startTimer();
+            } else {
+                // Volver al trabajo
+                currentPhase = 'work';
+                currentTime = currentSession.workMinutes * 60;
+                document.getElementById('timer-phase').textContent = '⏰ Tiempo de Trabajo';
+                alert('¡Descanso terminado! Volvamos al trabajo 💪');
+                updateTimerDisplay();
+                startTimer();
+            }
+        }
+
+        // Verificar logros
+        function checkAchievements() {
+            let achievements = JSON.parse(localStorage.getItem('achievements'));
+            let newUnlocks = [];
+
+            achievements.forEach(achievement => {
+                if (!currentUser.achievements.includes(achievement.id) && !achievement.unlocked) {
+                    let unlock = false;
+
+                    switch(achievement.id) {
+                        case 1: // Primera sesión
+                            unlock = currentUser.completedSessions >= 1;
+                            break;
+                        case 2: // Racha de 7 días
+                            unlock = currentUser.streak >= 7;
+                            break;
+                        case 3: // 50 sesiones
+                            unlock = currentUser.completedSessions >= 50;
+                            break;
+                        case 4: // 5 cosméticos
+                            unlock = currentUser.purchasedItems.length >= 5;
+                            break;
+                    }
+
+                    if (unlock) {
+                        achievement.unlocked = true;
+                        currentUser.achievements.push(achievement.id);
+                        currentUser.coins += achievement.reward;
+                        newUnlocks.push(achievement);
+                    }
+                }
+            });
+
+            localStorage.setItem('achievements', JSON.stringify(achievements));
+            saveUser();
+
+            if (newUnlocks.length > 0) {
+                newUnlocks.forEach(ach => {
+                    alert(`🏆 ¡Logro desbloqueado!\n${ach.name}\n+${ach.reward} monedas`);
+                });
+            }
+        }
+
+        // Cargar tienda
+        function loadShop() {
+            const shopGrid = document.getElementById('shop-grid');
+            const shopItems = JSON.parse(localStorage.getItem('shopItems'));
+            shopGrid.innerHTML = '';
+
+            shopItems.forEach(item => {
+                const isPremiumItem = item.price > 10;
+                const canBuy = currentUser.coins >= item.price && 
+                              (!isPremiumItem || currentUser.plan === 'premium' || currentUser.plan === 'semestral' || currentUser.plan === 'annual') &&
+                              !currentUser.purchasedItems.includes(item.id);
+
+                const itemDiv = document.createElement('div');
+                itemDiv.className = 'shop-item';
+                itemDiv.innerHTML = `
+                    <div class="shop-item-icon">${item.icon}</div>
+                    <h4>${item.name}</h4>
+                    <div class="shop-item-price">💰 ${item.price}</div>
+                    ${isPremiumItem && currentUser.plan !== 'premium' && currentUser.plan !== 'semestral' && currentUser.plan !== 'annual' ? 
+                        '<button class="buy-btn" disabled>⭐ Premium</button>' :
+                        `<button class="buy-btn" ${!canBuy ? 'disabled' : ''} onclick="buyItem(${item.id})">
+                            ${currentUser.purchasedItems.includes(item.id) ? 'Comprado ✓' : 'Comprar'}
+                        </button>`
+                    }
+                `;
+                shopGrid.appendChild(itemDiv);
+            });
+        }
+
+        // Comprar item
+        function buyItem(itemId) {
+            const shopItems = JSON.parse(localStorage.getItem('shopItems'));
+            const item = shopItems.find(i => i.id === itemId);
+
+            if (currentUser.coins >= item.price) {
+                currentUser.coins -= item.price;
+                currentUser.purchasedItems.push(itemId);
+                saveUser();
+                loadShop();
+                updateDashboard();
+                checkAchievements();
+                alert(`¡Has comprado ${item.name}! 🎉`);
+            }
+        }
+
+        // Cargar logros
+        function loadAchievements() {
+            const achievementsGrid = document.getElementById('achievements-grid');
+            const achievements = JSON.parse(localStorage.getItem('achievements'));
+            achievementsGrid.innerHTML = '';
+
+            achievements.forEach(achievement => {
+                const isUnlocked = currentUser.achievements.includes(achievement.id);
+                const achievementDiv = document.createElement('div');
+                achievementDiv.className = `achievement-card ${!isUnlocked ? 'locked' : ''}`;
+                achievementDiv.innerHTML = `
+                    <div class="achievement-icon">${achievement.icon}</div>
+                    <div class="achievement-info">
+                        <h4>${achievement.name}</h4>
+                        <p>${achievement.description}</p>
+                        <div class="achievement-reward">
+                            ${isUnlocked ? '✓ Completado' : `💰 ${achievement.reward} monedas`}
+                        </div>
+                    </div>
+                `;
+                achievementsGrid.appendChild(achievementDiv);
+            });
+        }
+
+        // Interceptar cambios de pantalla para cargar datos
+        const originalShowScreen = showScreen;
+        showScreen = function(screenId) {
+            originalShowScreen(screenId);
+            
+            if (screenId === 'shop' && currentUser) {
+                loadShop();
+            } else if (screenId === 'achievements' && currentUser) {
+                loadAchievements();
+            } else if (screenId === 'dashboard' && currentUser) {
+                updateDashboard();
+            }
+        };
+
+        // Inicializar
+        initDefaultData();
+    </script>
+</body>
+</html>
